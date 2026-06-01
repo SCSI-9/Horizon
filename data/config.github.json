@@ -97,6 +97,16 @@
           "subreddit": "learnmachinelearning",
           "limit": 5,
           "enabled": true
+        },
+        {
+          "subreddit": "QuantumComputing",
+          "limit": 10,
+          "enabled": true
+        },
+        {
+          "subreddit": "quantum",
+          "limit": 10,
+          "enabled": true
         }
       ],
       "users": []
@@ -227,6 +237,36 @@
         "url": "https://feeds.feedburner.com/TheHackersNews",
         "enabled": true,
         "category": "security"
+      },
+      {
+        "name": "The Quantum Insider",
+        "url": "https://thequantuminsider.com/feed/",
+        "enabled": true,
+        "category": "quantum"
+      },
+      {
+        "name": "Quantum Zeitgeist",
+        "url": "https://quantumzeitgeist.com/feed/",
+        "enabled": true,
+        "category": "quantum"
+      },
+      {
+        "name": "Quanta Magazine",
+        "url": "https://www.quantamagazine.org/feed/",
+        "enabled": true,
+        "category": "quantum"
+      },
+      {
+        "name": "AWS Quantum Blog",
+        "url": "https://aws.amazon.com/blogs/quantum-computing/feed/",
+        "enabled": true,
+        "category": "quantum"
+      },
+      {
+        "name": "Nature Quantum Info",
+        "url": "https://www.nature.com/npjqi.rss",
+        "enabled": true,
+        "category": "quantum"
       }
     ],
     "github": [
@@ -311,6 +351,24 @@
       {
         "owner": "terraform-providers",
         "repo": "terraform-provider-aws",
+        "type": "releases",
+        "enabled": true
+      },
+      {
+        "owner": "Qiskit",
+        "repo": "qiskit",
+        "type": "releases",
+        "enabled": true
+      },
+      {
+        "owner": "PennyLaneAI",
+        "repo": "pennylane",
+        "type": "releases",
+        "enabled": true
+      },
+      {
+        "owner": "quantumlib",
+        "repo": "Cirq",
         "type": "releases",
         "enabled": true
       }
