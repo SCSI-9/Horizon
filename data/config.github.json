@@ -6,7 +6,7 @@
     "api_key_env": "GEMINI_API_KEY",
     "temperature": 0.3,
     "max_tokens": 4096,
-    "throttle_sec": 2,
+    "throttle_sec": 5,
     "analysis_concurrency": 1,
     "enrichment_concurrency": 1
   },
@@ -73,12 +73,6 @@
         "category": "devops"
       },
       {
-        "name": "CNCF Blog",
-        "url": "https://www.cncf.io/feed/",
-        "enabled": true,
-        "category": "cloud-native"
-      },
-      {
         "name": "Kubernetes Blog",
         "url": "https://kubernetes.io/feed.xml",
         "enabled": true,
@@ -91,12 +85,6 @@
         "category": "engineering"
       },
       {
-        "name": "Docker Blog",
-        "url": "https://www.docker.com/blog/feed/",
-        "enabled": true,
-        "category": "containers"
-      },
-      {
         "name": "Cloudflare Blog",
         "url": "https://blog.cloudflare.com/rss/",
         "enabled": true,
@@ -107,6 +95,18 @@
         "url": "https://about.gitlab.com/atom.xml",
         "enabled": true,
         "category": "devops"
+      },
+      {
+        "name": "Docker Blog",
+        "url": "https://www.docker.com/blog/feed",
+        "enabled": true,
+        "category": "containers"
+      },
+      {
+        "name": "CNCF Blog",
+        "url": "https://www.cncf.io/blog/feed/",
+        "enabled": true,
+        "category": "cloud-native"
       }
     ],
     "github": [
@@ -168,12 +168,6 @@
         "type": "repo_releases",
         "owner": "cloudflare",
         "repo": "workers-sdk",
-        "enabled": true
-      },
-      {
-        "type": "repo_releases",
-        "owner": "gitlab-org",
-        "repo": "gitlab",
         "enabled": true
       }
     ],
