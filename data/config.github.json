@@ -32,42 +32,146 @@
       "enabled": true,
       "fetch_comments": 3,
       "subreddits": [
-        { "subreddit": "devops", "sort": "hot", "fetch_limit": 15, "min_score": 50 },
-        { "subreddit": "kubernetes", "sort": "hot", "fetch_limit": 15, "min_score": 30 },
-        { "subreddit": "Terraform", "sort": "hot", "fetch_limit": 10, "min_score": 20 },
-        { "subreddit": "selfhosted", "sort": "hot", "fetch_limit": 10, "min_score": 50 },
-        { "subreddit": "netsec", "sort": "hot", "fetch_limit": 10, "min_score": 50 }
+        {
+          "subreddit": "devops",
+          "sort": "hot",
+          "fetch_limit": 15,
+          "min_score": 50
+        },
+        {
+          "subreddit": "kubernetes",
+          "sort": "hot",
+          "fetch_limit": 15,
+          "min_score": 30
+        },
+        {
+          "subreddit": "Terraform",
+          "sort": "hot",
+          "fetch_limit": 10,
+          "min_score": 20
+        },
+        {
+          "subreddit": "selfhosted",
+          "sort": "hot",
+          "fetch_limit": 10,
+          "min_score": 50
+        },
+        {
+          "subreddit": "netsec",
+          "sort": "hot",
+          "fetch_limit": 10,
+          "min_score": 50
+        }
       ],
       "users": []
     },
     "rss": [
-      { "name": "The New Stack", "url": "https://thenewstack.io/feed/", "enabled": true, "category": "devops" },
-      { "name": "CNCF Blog", "url": "https://www.cncf.io/feed/", "enabled": true, "category": "cloud-native" },
-      { "name": "Kubernetes Blog", "url": "https://kubernetes.io/feed.xml", "enabled": true, "category": "kubernetes" },
-      { "name": "GitHub Engineering", "url": "https://github.blog/engineering.atom", "enabled": true, "category": "engineering" },
-      { "name": "Docker Blog", "url": "https://www.docker.com/blog/feed/", "enabled": true, "category": "containers" }
+      {
+        "name": "The New Stack",
+        "url": "https://thenewstack.io/feed/",
+        "enabled": true,
+        "category": "devops"
+      },
+      {
+        "name": "CNCF Blog",
+        "url": "https://www.cncf.io/feed/",
+        "enabled": true,
+        "category": "cloud-native"
+      },
+      {
+        "name": "Kubernetes Blog",
+        "url": "https://kubernetes.io/feed.xml",
+        "enabled": true,
+        "category": "kubernetes"
+      },
+      {
+        "name": "GitHub Engineering",
+        "url": "https://github.blog/engineering.atom",
+        "enabled": true,
+        "category": "engineering"
+      },
+      {
+        "name": "Docker Blog",
+        "url": "https://www.docker.com/blog/feed/",
+        "enabled": true,
+        "category": "containers"
+      }
     ],
     "github": [
-      { "type": "repo_releases", "owner": "kubernetes", "repo": "kubernetes", "enabled": true },
-      { "type": "repo_releases", "owner": "hashicorp", "repo": "terraform", "enabled": true },
-      { "type": "repo_releases", "owner": "opentofu", "repo": "opentofu", "enabled": true },
-      { "type": "repo_releases", "owner": "argoproj", "repo": "argo-cd", "enabled": true },
-      { "type": "repo_releases", "owner": "grafana", "repo": "grafana", "enabled": true },
-      { "type": "repo_releases", "owner": "prometheus", "repo": "prometheus", "enabled": true },
-      { "type": "repo_releases", "owner": "helm", "repo": "helm", "enabled": true },
-      { "type": "repo_releases", "owner": "cilium", "repo": "cilium", "enabled": true }
+      {
+        "type": "repo_releases",
+        "owner": "kubernetes",
+        "repo": "kubernetes",
+        "enabled": true
+      },
+      {
+        "type": "repo_releases",
+        "owner": "hashicorp",
+        "repo": "terraform",
+        "enabled": true
+      },
+      {
+        "type": "repo_releases",
+        "owner": "opentofu",
+        "repo": "opentofu",
+        "enabled": true
+      },
+      {
+        "type": "repo_releases",
+        "owner": "argoproj",
+        "repo": "argo-cd",
+        "enabled": true
+      },
+      {
+        "type": "repo_releases",
+        "owner": "grafana",
+        "repo": "grafana",
+        "enabled": true
+      },
+      {
+        "type": "repo_releases",
+        "owner": "prometheus",
+        "repo": "prometheus",
+        "enabled": true
+      },
+      {
+        "type": "repo_releases",
+        "owner": "helm",
+        "repo": "helm",
+        "enabled": true
+      },
+      {
+        "type": "repo_releases",
+        "owner": "cilium",
+        "repo": "cilium",
+        "enabled": true
+      }
     ],
     "ossinsight": {
       "enabled": true,
       "period": "past_24_hours",
-      "languages": ["Go", "Python", "Rust", "Shell"],
-      "keywords": ["kubernetes", "docker", "terraform", "observability", "platform", "devops", "infra", "cloud"],
+      "languages": [
+        "Go",
+        "Python",
+        "Rust",
+        "Shell"
+      ],
+      "keywords": [
+        "kubernetes",
+        "docker",
+        "terraform",
+        "observability",
+        "platform",
+        "devops",
+        "infra",
+        "cloud"
+      ],
       "min_stars": 20,
       "max_items": 20
     }
   },
   "filtering": {
-    "ai_score_threshold": 6.5,
+    "ai_score_threshold": 5.0,
     "time_window_hours": 24
   },
   "webhook": {
