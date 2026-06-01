@@ -95,6 +95,18 @@
         "url": "https://www.docker.com/blog/feed/",
         "enabled": true,
         "category": "containers"
+      },
+      {
+        "name": "Cloudflare Blog",
+        "url": "https://blog.cloudflare.com/rss/",
+        "enabled": true,
+        "category": "networking"
+      },
+      {
+        "name": "GitLab Blog",
+        "url": "https://about.gitlab.com/atom.xml",
+        "enabled": true,
+        "category": "devops"
       }
     ],
     "github": [
@@ -144,6 +156,24 @@
         "type": "repo_releases",
         "owner": "cilium",
         "repo": "cilium",
+        "enabled": true
+      },
+      {
+        "type": "repo_releases",
+        "owner": "cloudflare",
+        "repo": "cloudflared",
+        "enabled": true
+      },
+      {
+        "type": "repo_releases",
+        "owner": "cloudflare",
+        "repo": "workers-sdk",
+        "enabled": true
+      },
+      {
+        "type": "repo_releases",
+        "owner": "gitlab-org",
+        "repo": "gitlab",
         "enabled": true
       }
     ],
