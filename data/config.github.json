@@ -9,7 +9,7 @@
     "throttle_sec": 1,
     "analysis_concurrency": 1,
     "enrichment_concurrency": 1,
-    "base_url": "https://api.githubcopilot.com"
+    "base_url": "https://models.inference.ai.azure.com"
   },
   "email": {
     "enabled": false,
