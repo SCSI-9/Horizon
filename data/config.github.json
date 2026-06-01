@@ -11,7 +11,16 @@
     "enrichment_concurrency": 1
   },
   "email": {
-    "enabled": false
+    "enabled": false,
+    "smtp_server": "smtp-mail.outlook.com",
+    "smtp_port": 587,
+    "imap_enabled": false,
+    "imap_server": "outlook.office365.com",
+    "imap_port": 993,
+    "email_address": "adil.hasanov@hotmail.com",
+    "sender_name": "Horizon Daily",
+    "subscribe_keyword": "SUBSCRIBE",
+    "unsubscribe_keyword": "UNSUBSCRIBE"
   },
   "sources": {
     "hackernews": {
@@ -70,7 +79,8 @@
     "layout": "markdown",
     "request_body": {
       "chat_id": "${TELEGRAM_CHAT_ID}",
-      "text": "#{summary}"
+      "text": "#{summary}",
+      "parse_mode": "Markdown"
     }
   }
 }
