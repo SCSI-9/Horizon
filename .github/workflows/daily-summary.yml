@@ -2,7 +2,7 @@ name: Daily Horizon Summary
 
 on:
   schedule:
-    - cron: '0 6 * * *'  # Every day at 6:00 AM UTC (10:00 AM Baku time)
+    - cron: '0 6 1,15 * *'  # Every 2 weeks: 1st and 15th of each month (10:00 AM Baku time)
   workflow_dispatch:      # Allow manual trigger
 
 jobs:
