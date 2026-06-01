@@ -99,15 +99,33 @@
       },
       {
         "name": "Docker Blog",
-        "url": "https://www.docker.com/blog/feed",
+        "url": "https://feeds.feedburner.com/Docker",
         "enabled": true,
         "category": "containers"
       },
       {
-        "name": "CNCF Blog",
-        "url": "https://www.cncf.io/blog/feed/",
+        "name": "OpenSSF Blog",
+        "url": "https://openssf.org/feed/",
         "enabled": true,
-        "category": "cloud-native"
+        "category": "security"
+      },
+      {
+        "name": "Prometheus Blog",
+        "url": "https://prometheus.io/blog/feed.xml",
+        "enabled": true,
+        "category": "observability"
+      },
+      {
+        "name": "Grafana Blog",
+        "url": "https://grafana.com/blog/index.xml",
+        "enabled": true,
+        "category": "observability"
+      },
+      {
+        "name": "Helm Blog",
+        "url": "https://helm.sh/blog/index.xml",
+        "enabled": true,
+        "category": "kubernetes"
       }
     ],
     "github": [
