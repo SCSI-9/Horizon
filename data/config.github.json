@@ -62,6 +62,41 @@
           "sort": "hot",
           "fetch_limit": 10,
           "min_score": 50
+        },
+        {
+          "subreddit": "MachineLearning",
+          "limit": 10,
+          "enabled": true
+        },
+        {
+          "subreddit": "artificial",
+          "limit": 10,
+          "enabled": true
+        },
+        {
+          "subreddit": "aws",
+          "limit": 10,
+          "enabled": true
+        },
+        {
+          "subreddit": "azure",
+          "limit": 10,
+          "enabled": true
+        },
+        {
+          "subreddit": "databricks",
+          "limit": 10,
+          "enabled": true
+        },
+        {
+          "subreddit": "CloudFlare",
+          "limit": 10,
+          "enabled": true
+        },
+        {
+          "subreddit": "learnmachinelearning",
+          "limit": 5,
+          "enabled": true
         }
       ],
       "users": []
@@ -126,6 +161,72 @@
         "url": "https://helm.sh/blog/index.xml",
         "enabled": true,
         "category": "kubernetes"
+      },
+      {
+        "name": "AWS Blog",
+        "url": "https://aws.amazon.com/blogs/aws/feed/",
+        "enabled": true,
+        "category": "cloud"
+      },
+      {
+        "name": "AWS ML Blog",
+        "url": "https://aws.amazon.com/blogs/machine-learning/feed/",
+        "enabled": true,
+        "category": "ai-ml"
+      },
+      {
+        "name": "Azure Blog",
+        "url": "https://azure.microsoft.com/en-us/blog/feed/",
+        "enabled": true,
+        "category": "cloud"
+      },
+      {
+        "name": "HashiCorp Blog",
+        "url": "https://www.hashicorp.com/blog/feed.xml",
+        "enabled": true,
+        "category": "devops"
+      },
+      {
+        "name": "Databricks Blog",
+        "url": "https://www.databricks.com/feed",
+        "enabled": true,
+        "category": "data-ai"
+      },
+      {
+        "name": "OpenAI News",
+        "url": "https://openai.com/news/rss.xml",
+        "enabled": true,
+        "category": "ai"
+      },
+      {
+        "name": "TensorFlow Blog",
+        "url": "https://blog.tensorflow.org/feeds/posts/default",
+        "enabled": true,
+        "category": "ai-ml"
+      },
+      {
+        "name": "AI News",
+        "url": "https://www.artificialintelligence-news.com/feed/",
+        "enabled": true,
+        "category": "ai"
+      },
+      {
+        "name": "ML Mastery",
+        "url": "https://machinelearningmastery.com/feed/",
+        "enabled": true,
+        "category": "ai-ml"
+      },
+      {
+        "name": "TechCrunch",
+        "url": "https://techcrunch.com/feed/",
+        "enabled": true,
+        "category": "tech-news"
+      },
+      {
+        "name": "The Hacker News",
+        "url": "https://feeds.feedburner.com/TheHackersNews",
+        "enabled": true,
+        "category": "security"
       }
     ],
     "github": [
@@ -187,6 +288,30 @@
         "type": "repo_releases",
         "owner": "cloudflare",
         "repo": "workers-sdk",
+        "enabled": true
+      },
+      {
+        "owner": "microsoft",
+        "repo": "vscode",
+        "type": "releases",
+        "enabled": true
+      },
+      {
+        "owner": "openai",
+        "repo": "openai-python",
+        "type": "releases",
+        "enabled": true
+      },
+      {
+        "owner": "databricks",
+        "repo": "databricks-cli",
+        "type": "releases",
+        "enabled": true
+      },
+      {
+        "owner": "terraform-providers",
+        "repo": "terraform-provider-aws",
+        "type": "releases",
         "enabled": true
       }
     ],
