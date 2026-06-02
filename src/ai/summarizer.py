@@ -1,7 +1,8 @@
 """Daily summary generation — pure programmatic rendering."""
 
+import html as _html
 import re
-from typing import List, Dict
+from typing import List, Dict, Optional
 
 from ..models import ContentItem
 
@@ -247,6 +248,132 @@ class DailySummarizer:
         lines.append("---")
 
         return "\n".join(lines) + "\n\n"
+
+    # ------------------------------------------------------------------ #
+    # Telegram HTML rendering                                             #
+    # ------------------------------------------------------------------ #
+
+    _TG_NUMBER_EMOJIS = ["1️⃣", "2️⃣", "3️⃣", "4️⃣", "5️⃣",
+                         "6️⃣", "7️⃣", "8️⃣", "9️⃣", "🔟"]
+    _TG_MAX_CHARS = 4000  # Telegram's hard limit is 4096; leave a margin
+
+    def generate_telegram_item(
+        self,
+        item: "ContentItem",
+        language: str,
+        index: int,
+        total: int,
+    ) -> str:
+        """Generate Telegram HTML for one item (parse_mode=HTML)."""
+        meta = item.metadata
+        title = _html.escape(str(meta.get(f"title_{language}") or item.title))
+        url = _html.escape(str(item.url))
+        score = item.ai_score or "?"
+
+        summary_raw = (
+            meta.get(f"detailed_summary_{language}")
+            or meta.get("detailed_summary")
+            or item.ai_summary
+            or ""
+        )
+        background_raw = meta.get(f"background_{language}") or meta.get("background") or ""
+
+        if language == "zh":
+            summary_raw = _pangu(summary_raw)
+            background_raw = _pangu(background_raw)
+
+        summary = _html.escape(str(summary_raw))
+        background = _html.escape(str(background_raw)) if background_raw else ""
+
+        # Source line
+        source_type = item.source_type.value
+        source_parts = [_html.escape(source_type)]
+        if meta.get("subreddit"):
+            source_parts.append(f"r/{_html.escape(str(meta['subreddit']))}")
+        if meta.get("feed_name"):
+            source_parts.append(_html.escape(str(meta["feed_name"])))
+        elif item.author:
+            source_parts.append(_html.escape(str(item.author)))
+        if item.published_at:
+            day = item.published_at.strftime("%d").lstrip("0")
+            source_parts.append(item.published_at.strftime(f"%b {day}, %H:%M"))
+        source_line = " · ".join(source_parts)
+
+        lines = [
+            f"📰 <b>{index}/{total}</b>",
+            "",
+            f'<b><a href="{url}">{title}</a></b>',
+            f"⭐️ <b>{score}</b>/10",
+            "",
+            summary,
+        ]
+
+        if background:
+            lines += ["", f"📖 <b>Background:</b> {background}"]
+
+        discussion_url = meta.get("discussion_url")
+        if discussion_url and str(discussion_url) != str(item.url):
+            du = _html.escape(str(discussion_url))
+            lines += ["", f'💬 <a href="{du}">Discussion</a>']
+
+        if item.ai_tags:
+            tags_str = " ".join(f"<code>#{_html.escape(t)}</code>" for t in item.ai_tags)
+            lines += ["", f"🏷 {tags_str}"]
+
+        lines += ["", f"<i>{source_line}</i>"]
+
+        result = "\n".join(lines)
+        if len(result) > self._TG_MAX_CHARS:
+            result = result[: self._TG_MAX_CHARS - 3] + "..."
+        return result
+
+    def generate_telegram_overview(
+        self,
+        items: List["ContentItem"],
+        date: str,
+        total_fetched: int,
+        language: str = "en",
+        telegram_links: Optional[Dict[int, str]] = None,
+    ) -> str:
+        """Generate Telegram HTML overview (parse_mode=HTML).
+
+        Args:
+            telegram_links: Optional mapping of {item_index: t.me_url}.
+                            When provided, TOC entries link to the Telegram
+                            message rather than the original article URL.
+        """
+        if not items:
+            count = total_fetched
+            return (
+                f"<b>📡 Horizon Daily — {_html.escape(date)}</b>\n\n"
+                f"Analyzed <b>{count}</b> items, but none met the importance threshold."
+            )
+
+        lines = [
+            f"<b>📡 Horizon Daily — {_html.escape(date)}</b>",
+            "",
+            f"Analyzed <b>{total_fetched}</b> items · "
+            f"Selected <b>{len(items)}</b> important update{'s' if len(items) != 1 else ''}",
+            "",
+            "━━━━━━━━━━━━━━━━━━━━━",
+        ]
+
+        for i, item in enumerate(items, start=1):
+            title = _html.escape(
+                str(item.metadata.get(f"title_{language}") or item.title)
+            )
+            score = item.ai_score or "?"
+            num = self._TG_NUMBER_EMOJIS[i - 1] if i <= len(self._TG_NUMBER_EMOJIS) else f"{i}."
+            link = _html.escape((telegram_links or {}).get(i) or str(item.url))
+            lines.append(f'{num} <a href="{link}">{title}</a> ⭐️ {score}')
+
+        lines += [
+            "━━━━━━━━━━━━━━━━━━━━━",
+            "",
+            "<i>Tap a title to jump to its full message 👆</i>",
+        ]
+
+        return "\n".join(lines)
 
     def _generate_empty_summary(self, date: str, total_fetched: int, labels: dict) -> str:
         """Generate summary when no high-scoring items were found."""

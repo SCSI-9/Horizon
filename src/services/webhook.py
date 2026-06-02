@@ -17,6 +17,28 @@ from ..ai.summarizer import DailySummarizer
 logger = logging.getLogger(__name__)
 
 
+def _build_telegram_link(chat_id_str: str, message_id: int) -> Optional[str]:
+    """Build a t.me deep link for a Telegram message.
+
+    Handles public channels (@username), private supergroups/channels
+    (-100XXXXXXXXXX), and returns None for IDs that cannot be deep-linked.
+    """
+    chat_id_str = str(chat_id_str).strip()
+    if not chat_id_str:
+        return None
+    if chat_id_str.startswith("@"):
+        return f"https://t.me/{chat_id_str.lstrip('@')}/{message_id}"
+    try:
+        chat_id = int(chat_id_str)
+        if chat_id < 0:
+            abs_str = str(abs(chat_id))
+            # Supergroups/channels have abs IDs starting with "100" (13+ digits)
+            if len(abs_str) >= 12 and abs_str.startswith("100"):
+                return f"https://t.me/c/{abs_str[3:]}/{message_id}"
+    except ValueError:
+        pass
+    return None
+
 # Pattern: #{key} or #{key?param1=val1&param2=val2}
 _PLACEHOLDER_RE = re.compile(r"#\{(\w+)(\?\w+=[^}]+)?\}")
 _SENSITIVE_HEADER_RE = re.compile(
@@ -124,7 +146,9 @@ def _prepare_variables_for_body(
         return variables
 
     prepared = dict(variables)
-    prepared["summary"] = _format_markdown_for_webhook(str(variables["summary"]))
+    # Skip Markdown-specific cleanup when the caller signals HTML content
+    if not variables.get("_html_mode"):
+        prepared["summary"] = _format_markdown_for_webhook(str(variables["summary"]))
     return prepared
 
 
@@ -543,7 +567,7 @@ class WebhookNotifier:
             }
         ]
 
-    async def notify(self, variables: dict) -> None:
+    async def notify(self, variables: dict) -> Optional[int]:
         """Send a webhook notification with template variable substitution.
 
         If request_body is empty, sends a GET request.
@@ -553,10 +577,14 @@ class WebhookNotifier:
         Args:
             variables: Dict of template variable values to replace
                        in URL, request_body, and headers.
+
+        Returns:
+            Telegram message_id (int) when the response contains one,
+            otherwise None.
         """
         if not self.config.enabled:
             self.console.print("[yellow]Webhook is disabled, skipping notification.[/yellow]")
-            return
+            return None
 
         if not self.url:
             logger.warning(
@@ -567,7 +595,7 @@ class WebhookNotifier:
                 f"[yellow]Webhook enabled but URL is empty — "
                 f"env var '{self.config.url_env}' is not set. Skipping notification.[/yellow]"
             )
-            return
+            return None
 
         request_url, body_content, headers = self._render_request_components(variables)
         safe_url = redact_url(request_url)
@@ -578,6 +606,7 @@ class WebhookNotifier:
                 (body_content or "")[:2000],
             )
 
+        response = None
         try:
             async with httpx.AsyncClient(timeout=30.0) as client:
                 if body_content is None:
@@ -611,6 +640,17 @@ class WebhookNotifier:
                 f"[red]Webhook call failed unexpectedly: {type(e).__name__}: {e}[/red]"
             )
             logger.error("Webhook unexpected error: URL=%s, type=%s, error=%s", safe_url, type(e).__name__, e)
+
+        # Extract Telegram message_id if the response contains one
+        if response is not None:
+            try:
+                data = response.json()
+                if isinstance(data, dict) and data.get("ok") and "result" in data:
+                    return data["result"].get("message_id")
+            except Exception:
+                pass
+
+        return None
 
     def _check_body_error_code(self, body: str) -> Optional[str]:
         """Check if a 2xx response body contains a platform-specific error code.
@@ -728,6 +768,27 @@ class WebhookNotifier:
             lang: Language code ("en" or "zh")
             summarizer: DailySummarizer instance for generating webhook overviews
         """
+        platform = getattr(self.config, "platform", "generic")
+        delivery = getattr(self.config, "delivery", "summary")
+
+        # Telegram-specific flow: send items first to collect message_ids,
+        # then send the overview with deep links back to each item message.
+        if (
+            platform == "telegram"
+            and delivery == "summary_and_items"
+        ):
+            webhook_languages = getattr(self.config, "languages", None)
+            if webhook_languages and lang not in webhook_languages:
+                self.console.print(
+                    f"🔕 Skipping {lang.upper()} webhook notification "
+                    f"(filtered by webhook.languages)"
+                )
+                return
+            await self._send_telegram_summary_with_links(
+                important_items, all_items_count, date, lang, summarizer
+            )
+            return
+
         messages = self.build_daily_summary_messages(
             summary=summary,
             important_items=important_items,
@@ -746,6 +807,77 @@ class WebhookNotifier:
         self.console.print(f"🔔 Sending {lang.upper()} webhook notification...")
         for message in messages:
             await self.notify(message)
+
+    async def _send_telegram_summary_with_links(
+        self,
+        important_items: List[ContentItem],
+        all_items_count: int,
+        date: str,
+        lang: str,
+        summarizer: DailySummarizer,
+    ) -> None:
+        """Send Telegram messages with HTML formatting and deep-link overview.
+
+        Items are sent first (in order) so their message_ids are known.
+        The overview is sent last with t.me links pointing back to each item.
+        """
+        total = len(important_items)
+        self.console.print(
+            f"🔔 Sending {lang.upper()} Telegram notification "
+            f"({total} item{'s' if total != 1 else ''} + overview)..."
+        )
+
+        base_vars = {
+            "date": date,
+            "language": lang,
+            "important_items": total,
+            "all_items": all_items_count,
+            "result": "success",
+            "timestamp": str(int(datetime.now(timezone.utc).timestamp())),
+            "_html_mode": True,
+        }
+
+        chat_id_str = os.environ.get("TELEGRAM_CHAT_ID", "")
+        telegram_links: dict = {}
+
+        for i, item in enumerate(important_items, start=1):
+            title = str(item.metadata.get(f"title_{lang}") or item.title)
+            text = summarizer.generate_telegram_item(
+                item, language=lang, index=i, total=total
+            )
+            msg_id = await self.notify(
+                {
+                    **base_vars,
+                    "message_kind": "item",
+                    "item_index": i,
+                    "item_count": total,
+                    "item_title": title,
+                    "item_url": str(item.url),
+                    "item_score": item.ai_score or "",
+                    "message_title": f"{i}/{total} {title}",
+                    "summary": text,
+                }
+            )
+            if msg_id and chat_id_str:
+                link = _build_telegram_link(chat_id_str, msg_id)
+                if link:
+                    telegram_links[i] = link
+
+        overview_text = summarizer.generate_telegram_overview(
+            important_items,
+            date,
+            all_items_count,
+            language=lang,
+            telegram_links=telegram_links or None,
+        )
+        await self.notify(
+            {
+                **base_vars,
+                "message_kind": "overview",
+                "message_title": f"Horizon {date} Overview",
+                "summary": overview_text,
+            }
+        )
 
     async def send_failure(
         self,

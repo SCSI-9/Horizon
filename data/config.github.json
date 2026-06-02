@@ -405,12 +405,12 @@
     "url_env": "TELEGRAM_WEBHOOK_URL",
     "delivery": "summary_and_items",
     "overview_position": "last",
-    "platform": "generic",
-    "layout": "markdown",
+    "platform": "telegram",
+    "layout": "html",
     "request_body": {
       "chat_id": "${TELEGRAM_CHAT_ID}",
       "text": "#{summary}",
-      "parse_mode": "Markdown"
+      "parse_mode": "HTML"
     }
   }
 }
