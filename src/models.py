@@ -258,7 +258,7 @@ class WebhookConfig(BaseModel):
     @field_validator("platform")
     @classmethod
     def validate_platform(cls, v: str) -> str:
-        allowed = {"generic", "feishu", "lark", "dingtalk", "slack", "discord"}
+        allowed = {"generic", "feishu", "lark", "dingtalk", "slack", "discord", "telegram"}
         if v not in allowed:
             raise ValueError(f"webhook.platform must be one of {allowed}, got '{v}'")
         return v
@@ -266,7 +266,7 @@ class WebhookConfig(BaseModel):
     @field_validator("layout")
     @classmethod
     def validate_layout(cls, v: str) -> str:
-        allowed = {"markdown", "collapsible"}
+        allowed = {"markdown", "collapsible", "html"}
         if v not in allowed:
             raise ValueError(f"webhook.layout must be one of {allowed}, got '{v}'")
         return v
@@ -274,7 +274,7 @@ class WebhookConfig(BaseModel):
     @field_validator("fallback_layout")
     @classmethod
     def validate_fallback_layout(cls, v: str) -> str:
-        allowed = {"markdown", "collapsible"}
+        allowed = {"markdown", "collapsible", "html"}
         if v not in allowed:
             raise ValueError(
                 f"webhook.fallback_layout must be one of {allowed}, got '{v}'"
